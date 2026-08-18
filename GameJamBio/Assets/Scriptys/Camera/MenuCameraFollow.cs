@@ -14,7 +14,6 @@ public class MenuCameraFollow : MonoBehaviour
     {
         if (cameraTransform == null)
             cameraTransform = Camera.main.transform;
-
         initialRotation = cameraTransform.localRotation;
     }
 
