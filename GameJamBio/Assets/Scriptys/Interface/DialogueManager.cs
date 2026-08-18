@@ -10,7 +10,7 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI characterName;    
     public TextMeshProUGUI dialogueArea;
 
-    private Queue<DialogueLine> lines;
+    private Queue<DialogueLine> lines = new Queue<DialogueLine>();
 
     public bool isDialogueActive = false;
 
@@ -22,13 +22,16 @@ public class DialogueManager : MonoBehaviour
         {
             instance = this;
         }
+        
     }
 
     public void StartDialogue(Dialogue dialogue)
     {
+       
         isDialogueActive = true;
-        
-        lines.Clear();
+        print(lines);
+        if(lines != null && lines.Count > 0) 
+            lines.Clear();
 
         foreach (DialogueLine dialogueLine in dialogue.dialogueLines)
         {
@@ -38,6 +41,7 @@ public class DialogueManager : MonoBehaviour
         DisplayNextDialogueLine();
     }
 
+    
     public void DisplayNextDialogueLine()
     {
         if (lines.Count == 0)
