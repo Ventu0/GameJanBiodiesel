@@ -11,10 +11,8 @@ public class ControleBarra : MonoBehaviour
 
     private void Start()
     {
-        slider.minValue = 0f;
-        slider.maxValue = 100f;
-        slider.value = 50f;
         slider.interactable = false;
+
         AtualizarTexto();
     }
 
@@ -32,6 +30,9 @@ public class ControleBarra : MonoBehaviour
 
     private void AtualizarTexto()
     {
-        textoValor.text = slider.value.ToString("0");
+        if (textoValor != null)
+        {
+            textoValor.text = slider.value.ToString("0");
+        }
     }
 }
