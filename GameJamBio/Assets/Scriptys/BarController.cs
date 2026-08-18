@@ -1,40 +1,37 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class BarController : MonoBehaviour
+public class ControleBarra : MonoBehaviour
 {
-    [SerializeField] private RectTransform barra;
+    [SerializeField] private Slider slider;
+    [SerializeField] private TMP_Text textoValor;
 
-    [SerializeField] private float _passo = 20f;
-    [SerializeField] private float _limiteEsquerda = -150f;
-    [SerializeField] private float _limiteDireita = 150f;
+    [SerializeField] private float passo = 10f;
 
-    private void Awake()
+    private void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        slider.minValue = 0f;
+        slider.maxValue = 100f;
+        slider.value = 50f;
+        slider.interactable = false;
+        AtualizarTexto();
     }
+
     public void Aumentar()
     {
-        MoverBarra(_passo);
+        slider.value += passo;
+        AtualizarTexto();
     }
 
     public void Diminuir()
     {
-        MoverBarra(-_passo);
+        slider.value -= passo;
+        AtualizarTexto();
     }
 
-    private void MoverBarra(float valor)
+    private void AtualizarTexto()
     {
-        Vector2 posicao = barra.anchoredPosition;
-
-        posicao.x += valor;
-
-        posicao.x = Mathf.Clamp(
-            posicao.x,
-            _limiteEsquerda,
-            _limiteDireita
-        );
-
-        barra.anchoredPosition = posicao;
+        textoValor.text = slider.value.ToString("0");
     }
 }
