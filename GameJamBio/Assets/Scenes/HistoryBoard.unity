@@ -857,6 +857,7 @@ GameObject:
   - component: {fileID: 1583324584}
   - component: {fileID: 1583324583}
   - component: {fileID: 1583324586}
+  - component: {fileID: 1583324587}
   m_Layer: 5
   m_Name: TextBox
   m_TagString: Untagged
@@ -1000,6 +1001,22 @@ MonoBehaviour:
     - character:
         name: 
       line: 
+--- !u!114 &1583324587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583324581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 140ddd1d18d3b0f42914aaab21c2af4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
+  characterName: {fileID: 1090989668}
+  dialogueArea: {fileID: 19366890}
+  isDialogueActive: 0
+  typingSpeed: 0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
