@@ -25,10 +25,7 @@ public class DialogueManager : MonoBehaviour
         {
             instance = this;
         }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
+        typingSpeed = 0.02f;
     }
 
     public void StartDialogue(Dialogue dialogue)
@@ -36,7 +33,7 @@ public class DialogueManager : MonoBehaviour
         // Verifica se o diálogo existe.
         if (dialogue == null)
         {
-            Debug.LogError("DialogueManager: O diálogo recebido é NULL!");
+            Debug.LogError("falta o dialogo");
             return;
         }
 
@@ -44,17 +41,18 @@ public class DialogueManager : MonoBehaviour
         if (characterName == null)
         {
             Debug.LogError(
-                "DialogueManager: Character Name não foi configurado!",
+                "falta o persnagem",
                 this
             );
 
             return;
         }
 
+
         if (dialogueArea == null)
         {
             Debug.LogError(
-                "DialogueManager: Dialogue Area não foi configurado!",
+                "falta algo ai",
                 this
             );
 
