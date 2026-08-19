@@ -32,17 +32,19 @@ public class CarData : MonoBehaviour
     private float contadorEmissao;
     private float contadorPotencia;
 
+
     void Start()
     {
-        // Temperatura começa SEMPRE em 15
+        // Temperatura começa sempre em 15
         temperatura = 15f;
 
-        // Os outros valores começam aleatórios
+        // Valores iniciais aleatórios
         pressao = Random.Range(20f, 40f);
         emissao = Random.Range(10f, 50f);
         gasolina = Random.Range(40f, 60f);
         potencia = Random.Range(20f, 50f);
     }
+
 
     void Update()
     {
@@ -51,6 +53,7 @@ public class CarData : MonoBehaviour
         AtualizarEmissao();
         AtualizarPotencia();
     }
+
 
     // =========================================================
     // TEMPERATURA
@@ -74,6 +77,7 @@ public class CarData : MonoBehaviour
         }
     }
 
+
     // =========================================================
     // GASOLINA
     // =========================================================
@@ -96,6 +100,7 @@ public class CarData : MonoBehaviour
         }
     }
 
+
     // =========================================================
     // EMISSÃO
     // =========================================================
@@ -114,6 +119,7 @@ public class CarData : MonoBehaviour
             contadorEmissao = 0f;
         }
     }
+
 
     // =========================================================
     // POTÊNCIA
@@ -134,6 +140,7 @@ public class CarData : MonoBehaviour
         }
     }
 
+
     // =========================================================
     // PRESSÃO
     // =========================================================
@@ -149,6 +156,7 @@ public class CarData : MonoBehaviour
         );
     }
 
+
     public void DiminuirPressao(float quantidade)
     {
         pressao -= quantidade;
@@ -159,6 +167,7 @@ public class CarData : MonoBehaviour
             valorMaximo
         );
     }
+
 
     // =========================================================
     // TEMPERATURA - CONTROLE MANUAL
@@ -175,6 +184,7 @@ public class CarData : MonoBehaviour
         );
     }
 
+
     public void DiminuirTemperatura(float quantidade)
     {
         temperatura -= quantidade;
@@ -185,6 +195,7 @@ public class CarData : MonoBehaviour
             valorMaximo
         );
     }
+
 
     // =========================================================
     // EMISSÃO - CONTROLE MANUAL
@@ -201,6 +212,7 @@ public class CarData : MonoBehaviour
         );
     }
 
+
     public void DiminuirEmissao(float quantidade)
     {
         emissao -= quantidade;
@@ -211,6 +223,7 @@ public class CarData : MonoBehaviour
             valorMaximo
         );
     }
+
 
     // =========================================================
     // GASOLINA - CONTROLE MANUAL
@@ -227,6 +240,7 @@ public class CarData : MonoBehaviour
         );
     }
 
+
     public void DiminuirGasolina(float quantidade)
     {
         gasolina -= quantidade;
@@ -237,6 +251,7 @@ public class CarData : MonoBehaviour
             valorMaximo
         );
     }
+
 
     // =========================================================
     // POTÊNCIA - CONTROLE MANUAL
@@ -252,6 +267,7 @@ public class CarData : MonoBehaviour
             valorMaximo
         );
     }
+
 
     public void DiminuirPotencia(float quantidade)
     {
