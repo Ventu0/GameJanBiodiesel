@@ -176,9 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud
+  m_text: cena 2 essa aqui
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -761,9 +759,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Nome Irado
-
-'
+  m_text: PILOTO
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1322,10 +1318,34 @@ MonoBehaviour:
     - character:
         name: Engenheiro
       line: "Isso a\xED! a primeira vista parece gasolina normal, mas ela \xE9 produzida
-        em laboratorio a partir da materia prima, diferente do petr\xF3leo"
+        em laboratorio a partir da materia prima, diferente do petr\xF3leo."
     - character:
-        name: fhjfhgjfgjk
-      line: jhkfgrny
+        name: Piloto
+      line: E podemos colocar isso direto no motor?
+    - character:
+        name: Engenheiro
+      line: "Pode sim! A gente ainda t\xE1 testando, a nossa ideia \xE9 manter uma
+        boa funcionagem e conseguir uma combust\xE3o um pouquinho mais eficiente,
+        sem perder potencia. "
+    - character:
+        name: Piloto
+      line: 'Mas o comportamento do motor pode mudar '
+    - character:
+        name: Engenheiro
+      line: "Vai mudar bastante... A temperatura, o consumo, a resposta do acelerador...
+        A gente ainda n\xE3o sabe como que vai ficar depois de dirigir varias voltas
+        em alta rota\xE7\xE3o"
+    - character:
+        name: Piloto
+      line: "Ent\xE3o o carro de teste vai servir pra descobrir isso, n\xE9?"
+    - character:
+        name: Engenheiro
+      line: "Isso a\xED! se a gente conseguir um pouquinho mais de desempenho, sem
+        acabar com o motor, a gente vai ter uma outra alternativa al\xE9m do combustivel
+        convencional. "
+    - character:
+        name: Piloto
+      line: "Ent\xE3o vamo ver o que que essa novidade ai aguenta..."
   dialogueManager: {fileID: 0}
 --- !u!114 &1583324587
 MonoBehaviour:
