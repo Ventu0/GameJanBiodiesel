@@ -12,9 +12,8 @@ public class CameraController : MonoBehaviour
     [Header("Configurações do Pitstop")]
     public float tempoMaximoPitstop = 30f;
 
-    // Intervalo central aceitável (baseado na faixa de 5 a 60 do CarData)
-    public float valorMinimoIdeal = 25f;
-    public float valorMaximoIdeal = 35f;
+    // Margem exata para Pressão, Emissão e Potência em volta de 30
+    public float margemToleranciaExata = 0.5f;
 
     private float _timerPitstop;
     private bool _pitstopAtivo = false;
@@ -50,32 +49,55 @@ public class CameraController : MonoBehaviour
         _timerPitstop = tempoMaximoPitstop;
     }
 
-    // Vinculo esta função ao botão "Concluir Pitstop" na UI
+    // Vinculo esta função ao botão "Concluir Pitstop" na UI ou ela dispara ao zerar o tempo
     public void ValidarAjustesPitstop()
     {
         if (!_pitstopAtivo || _jogoAcabou) return;
 
         _pitstopAtivo = false;
 
-        bool tempOk = EstaNoCentro(carData.temperatura);
-        bool pressaoOk = EstaNoCentro(carData.pressao);
-        bool emissaoOk = EstaNoCentro(carData.emissao);
-        bool potenciaOk = EstaNoCentro(carData.potencia);
+        if (carData == null)
+        {
+            Debug.LogError("CarData não está atribuído no CameraController!");
+            return;
+        }
 
-        if (tempOk && pressaoOk && emissaoOk && potenciaOk)
+        // Regra 1: Temperatura < 60
+        bool tempOk = carData.temperatura < 60f;
+
+        // Regra 2: Gasolina >= 10
+        bool gasolinaOk = carData.gasolina >= 10f;
+
+        // Regra 3: Pressão, Emissão e Potência em 30
+        bool pressaoOk = Mathf.Abs(carData.pressao - 30f) <= margemToleranciaExata;
+        bool emissaoOk = Mathf.Abs(carData.emissao - 30f) <= margemToleranciaExata;
+        bool potenciaOk = Mathf.Abs(carData.potencia - 30f) <= margemToleranciaExata;
+
+        if (tempOk && gasolinaOk && pressaoOk && emissaoOk && potenciaOk)
         {
             Debug.Log("Pitstop Concluído com Sucesso!");
-            // Transição de volta para a corrida
+            FinalizarPitstopESeguirJogo();
         }
         else
         {
-            Derrota("Você não sincronizou a Temperatura, Pressão, Emissão e Potência no centro a tempo!");
+            Derrota("As configurações do Pitstop não atenderam aos requisitos exigidos!");
         }
     }
 
-    private bool EstaNoCentro(float valor)
+    private void FinalizarPitstopESeguirJogo()
     {
-        return valor >= valorMinimoIdeal && valor <= valorMaximoIdeal;
+        // Chama o método existente no ChangePerson para alternar/desativar a câmera do pitstop
+        ChangePerson trocaCamera = FindFirstObjectByType<ChangePerson>();
+        if (trocaCamera != null)
+        {
+            trocaCamera.AtivarModoPitstopApenas();
+        }
+
+        // Reseta os valores e libera o loop do jogo no CarData
+        if (carData != null)
+        {
+            carData.ValidarPitstop();
+        }
     }
 
     public void Derrota(string motivo)

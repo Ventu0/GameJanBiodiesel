@@ -21,9 +21,11 @@ public class ChangePerson : MonoBehaviour
     private bool _pitstopLiberado = false;
     private float _cronometro = 0f;
 
+    public static ChangePerson Instance { get; private set; }
     private void Awake()
     {
         AtualizarCameras();
+        Instance = this;
     }
 
     private void Update()

@@ -141,7 +141,7 @@ public class CarData : MonoBehaviour
         contadorEmissao = 0f;
         contadorPotencia = 0f;
 
-        ChangePerson trocaCamera = FindFirstObjectByType<ChangePerson>();
+        ChangePerson trocaCamera = ChangePerson.Instance;
 
         if (trocaCamera != null)
         {
