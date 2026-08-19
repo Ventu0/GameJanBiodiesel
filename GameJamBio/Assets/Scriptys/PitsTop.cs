@@ -23,10 +23,12 @@ public class PitsTop : MonoBehaviour
         {
             if (car != null)
             {
+                // Pega o componente SplineAnimate do carro
                 SplineAnimate spline = car.GetComponent<SplineAnimate>();
 
                 if (spline != null)
                 {
+                    // Método nativo da Unity para resetar o Spline para o início
                     spline.ElapsedTime = 0f;
                 }
             }
