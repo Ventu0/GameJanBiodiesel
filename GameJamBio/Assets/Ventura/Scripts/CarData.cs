@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class CarData : MonoBehaviour
 {
@@ -8,6 +9,10 @@ public class CarData : MonoBehaviour
     public float emissao = 30f;
     public float gasolina = 50f;
     public float potencia = 30f;
+
+    [Header("Margem de Acerto do Pitstop")]
+    public float valorAlvo = 32.5f;
+    public float margemTolerancia = 7.5f;
 
     [Header("Limites")]
     public float valorMinimo = 5f;
@@ -27,256 +32,154 @@ public class CarData : MonoBehaviour
     [Header("Potência")]
     public float tempoParaRandomizarPotencia = 1f;
 
+    [Header("Sistema de Pitstop e Derrota")]
+    public GameObject painelDerrota;
+    public TextMeshProUGUI txtMensagemDerrota;
+    public TextMeshProUGUI txtTimerPitstop;
+    public float tempoPitstop = 30f;
+
     private float contadorTemperatura;
     private float contadorGasolina;
     private float contadorEmissao;
     private float contadorPotencia;
 
+    private bool pitstopAtivo = false;
+    private bool jogoAcabou = false;
 
     void Start()
     {
-        // Temperatura começa sempre em 15
         temperatura = 15f;
-
-        // Valores iniciais aleatórios
         pressao = Random.Range(20f, 40f);
         emissao = Random.Range(10f, 50f);
         gasolina = Random.Range(40f, 60f);
         potencia = Random.Range(20f, 50f);
-    }
 
+        if (painelDerrota != null) painelDerrota.SetActive(false);
+    }
 
     void Update()
     {
+        if (jogoAcabou) return;
+
         AtualizarTemperatura();
         AtualizarGasolina();
         AtualizarEmissao();
         AtualizarPotencia();
+
+        if (gasolina <= valorMinimo)
+        {
+            AcionarDerrota("A gasolina acabou no meio da corrida!");
+        }
+
+        if (pitstopAtivo)
+        {
+            tempoPitstop -= Time.deltaTime;
+
+            if (txtTimerPitstop != null)
+                txtTimerPitstop.text = $"Pitstop: {Mathf.CeilToInt(tempoPitstop)}s";
+
+            if (tempoPitstop <= 0)
+            {
+                ValidarPitstop();
+            }
+        }
     }
 
+    public void IniciarPitstop()
+    {
+        if (pitstopAtivo) return;
 
-    // =========================================================
-    // TEMPERATURA
-    // =========================================================
+        pitstopAtivo = true;
+        tempoPitstop = 30f;
+
+        ChangePerson trocaCamera = FindFirstObjectByType<ChangePerson>();
+        if (trocaCamera != null)
+        {
+            trocaCamera.AtivarModoPitstopApenas();
+        }
+    }
+
+    public void ValidarPitstop()
+    {
+        pitstopAtivo = false;
+
+        float limiteMin = valorAlvo - margemTolerancia;
+        float limiteMax = valorAlvo + margemTolerancia;
+
+        bool tempOk = temperatura >= limiteMin && temperatura <= limiteMax;
+        bool pressaoOk = pressao >= limiteMin && pressao <= limiteMax;
+        bool emissaoOk = emissao >= limiteMin && emissao <= limiteMax;
+        bool potenciaOk = potencia >= limiteMin && potencia <= limiteMax;
+
+        if (tempOk && pressaoOk && emissaoOk && potenciaOk)
+        {
+            Debug.Log("Pitstop concluído com sucesso!");
+        }
+        else
+        {
+            AcionarDerrota("Você não alinhou todos os componentes dentro da margem permitida a tempo!");
+        }
+    }
+
+    public void AcionarDerrota(string motivo)
+    {
+        jogoAcabou = true;
+        pitstopAtivo = false;
+
+        if (painelDerrota != null) painelDerrota.SetActive(true);
+        if (txtMensagemDerrota != null) txtMensagemDerrota.text = motivo;
+
+        Time.timeScale = 0f;
+    }
 
     void AtualizarTemperatura()
     {
         contadorTemperatura += Time.deltaTime;
-
         if (contadorTemperatura >= tempoParaAumentarTemperatura)
         {
-            temperatura += quantoAumentaTemperatura;
-
-            temperatura = Mathf.Clamp(
-                temperatura,
-                valorMinimo,
-                valorMaximo
-            );
-
+            temperatura = Mathf.Clamp(temperatura + quantoAumentaTemperatura, valorMinimo, valorMaximo);
             contadorTemperatura = 0f;
         }
     }
 
-
-    // =========================================================
-    // GASOLINA
-    // =========================================================
-
     void AtualizarGasolina()
     {
         contadorGasolina += Time.deltaTime;
-
         if (contadorGasolina >= tempoParaGastarGasolina)
         {
-            gasolina -= quantoGastaGasolina;
-
-            gasolina = Mathf.Clamp(
-                gasolina,
-                valorMinimo,
-                valorMaximo
-            );
-
+            gasolina = Mathf.Clamp(gasolina - quantoGastaGasolina, valorMinimo, valorMaximo);
             contadorGasolina = 0f;
         }
     }
 
-
-    // =========================================================
-    // EMISSÃO
-    // =========================================================
-
     void AtualizarEmissao()
     {
         contadorEmissao += Time.deltaTime;
-
         if (contadorEmissao >= tempoParaRandomizarEmissao)
         {
-            emissao = Random.Range(
-                valorMinimo,
-                valorMaximo
-            );
-
+            emissao = Random.Range(valorMinimo, valorMaximo);
             contadorEmissao = 0f;
         }
     }
 
-
-    // =========================================================
-    // POTÊNCIA
-    // =========================================================
-
     void AtualizarPotencia()
     {
         contadorPotencia += Time.deltaTime;
-
         if (contadorPotencia >= tempoParaRandomizarPotencia)
         {
-            potencia = Random.Range(
-                valorMinimo,
-                valorMaximo
-            );
-
+            potencia = Random.Range(valorMinimo, valorMaximo);
             contadorPotencia = 0f;
         }
     }
 
-
-    // =========================================================
-    // PRESSÃO
-    // =========================================================
-
-    public void AumentarPressao(float quantidade)
-    {
-        pressao += quantidade;
-
-        pressao = Mathf.Clamp(
-            pressao,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    public void DiminuirPressao(float quantidade)
-    {
-        pressao -= quantidade;
-
-        pressao = Mathf.Clamp(
-            pressao,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    // =========================================================
-    // TEMPERATURA - CONTROLE MANUAL
-    // =========================================================
-
-    public void AumentarTemperatura(float quantidade)
-    {
-        temperatura += quantidade;
-
-        temperatura = Mathf.Clamp(
-            temperatura,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    public void DiminuirTemperatura(float quantidade)
-    {
-        temperatura -= quantidade;
-
-        temperatura = Mathf.Clamp(
-            temperatura,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    // =========================================================
-    // EMISSÃO - CONTROLE MANUAL
-    // =========================================================
-
-    public void AumentarEmissao(float quantidade)
-    {
-        emissao += quantidade;
-
-        emissao = Mathf.Clamp(
-            emissao,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    public void DiminuirEmissao(float quantidade)
-    {
-        emissao -= quantidade;
-
-        emissao = Mathf.Clamp(
-            emissao,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    // =========================================================
-    // GASOLINA - CONTROLE MANUAL
-    // =========================================================
-
-    public void AumentarGasolina(float quantidade)
-    {
-        gasolina += quantidade;
-
-        gasolina = Mathf.Clamp(
-            gasolina,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    public void DiminuirGasolina(float quantidade)
-    {
-        gasolina -= quantidade;
-
-        gasolina = Mathf.Clamp(
-            gasolina,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    // =========================================================
-    // POTÊNCIA - CONTROLE MANUAL
-    // =========================================================
-
-    public void AumentarPotencia(float quantidade)
-    {
-        potencia += quantidade;
-
-        potencia = Mathf.Clamp(
-            potencia,
-            valorMinimo,
-            valorMaximo
-        );
-    }
-
-
-    public void DiminuirPotencia(float quantidade)
-    {
-        potencia -= quantidade;
-
-        potencia = Mathf.Clamp(
-            potencia,
-            valorMinimo,
-            valorMaximo
-        );
-    }
+    public void AumentarPressao(float q) => pressao = Mathf.Clamp(pressao + q, valorMinimo, valorMaximo);
+    public void DiminuirPressao(float q) => pressao = Mathf.Clamp(pressao - q, valorMinimo, valorMaximo);
+    public void AumentarTemperatura(float q) => temperatura = Mathf.Clamp(temperatura + q, valorMinimo, valorMaximo);
+    public void DiminuirTemperatura(float q) => temperatura = Mathf.Clamp(temperatura - q, valorMinimo, valorMaximo);
+    public void AumentarEmissao(float q) => emissao = Mathf.Clamp(emissao + q, valorMinimo, valorMaximo);
+    public void DiminuirEmissao(float q) => emissao = Mathf.Clamp(emissao - q, valorMinimo, valorMaximo);
+    public void AumentarGasolina(float q) => gasolina = Mathf.Clamp(gasolina + q, valorMinimo, valorMaximo);
+    public void DiminuirGasolina(float q) => gasolina = Mathf.Clamp(gasolina - q, valorMinimo, valorMaximo);
+    public void AumentarPotencia(float q) => potencia = Mathf.Clamp(potencia + q, valorMinimo, valorMaximo);
+    public void DiminuirPotencia(float q) => potencia = Mathf.Clamp(potencia - q, valorMinimo, valorMaximo);
 }
