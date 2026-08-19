@@ -44,7 +44,9 @@ namespace SlimUI.ModernMenu{
         public GameObject PanelCombat;
         [Tooltip("The UI Sub-Panel under KEY BINDINGS for GENERAL")]
         public GameObject PanelGeneral;
-        
+
+		//public GameObject PanelHowToPlay;
+
 
         // highlights in settings screen
         [Header("SETTINGS SCREEN")]
@@ -180,8 +182,13 @@ namespace SlimUI.ModernMenu{
 			PanelGame.SetActive(true);
 			lineGame.SetActive(true);
 		}
-
-		public void VideoPanel(){
+        /*public void GamePanel()
+        {
+            DisablePanels();
+            PanelGame.SetActive(true);
+            lineGame.SetActive(true);
+        } */
+        public void VideoPanel(){
 			DisablePanels();
 			PanelVideo.SetActive(true);
 			lineVideo.SetActive(true);
