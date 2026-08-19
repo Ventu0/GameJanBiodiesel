@@ -495,15 +495,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 923e63ad1789cde4c80964fb3047325e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -522.11
+      value: -474.136
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 923e63ad1789cde4c80964fb3047325e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -249.607
+      value: -280.137
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 923e63ad1789cde4c80964fb3047325e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 18.507
+      value: 18.531
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 923e63ad1789cde4c80964fb3047325e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -543,7 +543,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 923e63ad1789cde4c80964fb3047325e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7071182760956848314, guid: 923e63ad1789cde4c80964fb3047325e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -1571,8 +1571,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 21.88955, y: 13.942525, z: 1}
+  m_Center: {x: -0.70865875, y: 0.06661904, z: -0.00002078044}
 --- !u!1 &228058613
 GameObject:
   m_ObjectHideFlags: 0
@@ -11105,7 +11105,7 @@ MonoBehaviour:
   - {fileID: 1141966956}
   camerasPitstop:
   - {fileID: 1913093107}
-  tempoParaLiberarPitstop: 10
+  tempoParaLiberarPitstop: 30
 --- !u!4 &1292281666
 Transform:
   m_ObjectHideFlags: 0
