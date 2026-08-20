@@ -1,69 +1,70 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Splines; // Importante: inclui a biblioteca de Splines da Unity
+using UnityEngine.Splines;
 
 public class PitsTop : MonoBehaviour
 {
     [SerializeField] private GameObject[] _cars;
 
+    [Header("Conexão com o Minigame")]
+    public CameraController cameraController;
+
     [Header("Configurações de Tempo")]
     [SerializeField] private float _tempoAtivo = 10f;
-    [SerializeField] private float _tempoDesativado = 5f;
 
     void Start()
     {
-        StartCoroutine(TempoEspera());
+        // Começa a corrida no instante em que o jogo abre
+        StartCoroutine(RotinaDeCorrida());
     }
 
     private void ResetarSplineDosCarros()
     {
         if (_cars == null) return;
-
         foreach (GameObject car in _cars)
         {
             if (car != null)
             {
-                // Pega o componente SplineAnimate do carro
                 SplineAnimate spline = car.GetComponent<SplineAnimate>();
-
-                if (spline != null)
-                {
-                    // Método nativo da Unity para resetar o Spline para o início
-                    spline.ElapsedTime = 0f;
-                }
+                if (spline != null) spline.ElapsedTime = 0f;
             }
         }
     }
 
-    public IEnumerator TempoEspera()
+    public IEnumerator RotinaDeCorrida()
     {
-        while (true)
+        // 1. Liga os carros e deixa eles correrem pelo tempo definido
+        AtivarCarros(true);
+        yield return new WaitForSeconds(_tempoAtivo);
+
+        // 2. O tempo acabou! Desativa os carros e reseta a posição para o início da Spline
+        AtivarCarros(false);
+        ResetarSplineDosCarros();
+
+        // 3. Aciona o minigame no CameraController
+        if (cameraController != null)
         {
-            // 1. Aguarda os carros rodarem na Spline
-            yield return new WaitForSeconds(_tempoAtivo);
+            cameraController.IniciarPitstop();
+        }
+        else
+        {
+            Debug.LogError("Atenção: Você esqueceu de arrastar o CameraController para o script PitsTop lá no Unity!");
+        }
+    }
 
-            // 2. Desativa os carros
-            if (_cars != null)
+    // O CameraController vai chamar esta função 13 segundos depois que você vencer
+    public void RetomarCorrida()
+    {
+        StartCoroutine(RotinaDeCorrida());
+    }
+
+    private void AtivarCarros(bool estado)
+    {
+        if (_cars != null)
+        {
+            foreach (GameObject car in _cars)
             {
-                foreach (GameObject car in _cars)
-                {
-                    car?.SetActive(false);
-                }
-            }
-
-            // 3. Reseta a posição deles na Spline para o tempo 0
-            ResetarSplineDosCarros();
-
-            // 4. Aguarda o tempo desativado
-            yield return new WaitForSeconds(_tempoDesativado);
-
-            // 5. Reativa os carros (eles vão começar a rodar do início da Spline)
-            if (_cars != null)
-            {
-                foreach (GameObject car in _cars)
-                {
-                    car?.SetActive(true);
-                }
+                car?.SetActive(estado);
             }
         }
     }
