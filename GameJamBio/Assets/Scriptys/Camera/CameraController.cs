@@ -1,39 +1,53 @@
-using TMPro;
+Ôªøusing TMPro;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class CameraController : MonoBehaviour
 {
-    [Header("ReferÍncias")]
+    [Header("Refer√™ncias")]
     public CarData carData;
     public GameObject painelDerrota;
     public TextMeshProUGUI txtMensagemDerrota;
-    public TextMeshProUGUI txtTimer; // <-- S” ESSE VOC  PRECISA ARRASTAR L¡ NO UNITY!
+    public TextMeshProUGUI txtTimer;
 
-    [Header("ConfiguraÁıes do Pitstop")]
+    [Header("Configura√ß√µes do Pitstop")]
     public float tempoMaximoPitstop = 20f;
     public float margemToleranciaExata = 0.5f;
 
     private float _timerPitstop;
+
     private bool _pitstopAtivo = false;
     private bool _jogoAcabou = false;
+    [Header("Cena de Derrota")]
+    [SerializeField] private string nomeCenaDerrota = "GameOver";
 
     void Start()
     {
-        if (painelDerrota != null) painelDerrota.SetActive(false);
+        if (painelDerrota != null)
+        {
+            painelDerrota.SetActive(false);
+        }
+
         _timerPitstop = tempoMaximoPitstop;
+
         AtualizarTextoTimer();
     }
 
     void Update()
     {
-        if (_jogoAcabou || !_pitstopAtivo) return;
+        if (_jogoAcabou)
+            return;
+
+        if (!_pitstopAtivo)
+            return;
 
         _timerPitstop -= Time.deltaTime;
 
-        if (_timerPitstop <= 0)
+        if (_timerPitstop <= 0f)
         {
-            _timerPitstop = 0;
+            _timerPitstop = 0f;
+
             AtualizarTextoTimer();
+
             ValidarAjustesPitstop();
         }
         else
@@ -42,81 +56,231 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    // =========================================================
+    // ATUALIZAR TIMER
+    // =========================================================
+
     private void AtualizarTextoTimer()
     {
         if (txtTimer != null)
         {
-            txtTimer.text = $"Pitstop: {_timerPitstop.ToString("F0")}s";
+            txtTimer.text =
+                $"Pitstop: {Mathf.CeilToInt(_timerPitstop)}s";
         }
     }
 
+    // =========================================================
+    // INICIAR PIT STOP
+    // =========================================================
+
     public void IniciarPitstop()
     {
-        if (_jogoAcabou) return;
+        if (_jogoAcabou)
+            return;
+
+        if (_pitstopAtivo)
+            return;
+
+        Debug.Log("üîß PIT STOP INICIADO");
 
         _pitstopAtivo = true;
+
         _timerPitstop = tempoMaximoPitstop;
+
         AtualizarTextoTimer();
 
-        if (carData != null) carData.IniciarPitstop();
+        if (carData != null)
+        {
+            carData.IniciarPitstop();
+        }
 
-        // Procura a c‚mera na marra e liga o Pitstop
-        ChangePerson trocaCamera = FindFirstObjectByType<ChangePerson>();
-        if (trocaCamera != null) trocaCamera.AtivarModoPitstopApenas();
+        ChangePerson trocaCamera =
+            FindFirstObjectByType<ChangePerson>();
+
+        if (trocaCamera != null)
+        {
+            trocaCamera.AtivarModoPitstopApenas();
+        }
     }
+
+    // =========================================================
+    // VALIDAR PIT STOP
+    // =========================================================
 
     public void ValidarAjustesPitstop()
     {
-        if (!_pitstopAtivo || _jogoAcabou) return;
+        if (!_pitstopAtivo)
+            return;
+
+        if (_jogoAcabou)
+            return;
+
         _pitstopAtivo = false;
 
-        if (carData == null) return;
-
-        bool tempOk = carData.temperatura < 60f;
-        bool gasolinaOk = carData.gasolina >= 10f;
-        bool pressaoOk = Mathf.Abs(carData.pressao - 30f) <= margemToleranciaExata;
-        bool emissaoOk = Mathf.Abs(carData.emissao - 30f) <= margemToleranciaExata;
-        bool potenciaOk = Mathf.Abs(carData.potencia - 30f) <= margemToleranciaExata;
-
-        if (tempOk && gasolinaOk && pressaoOk && emissaoOk && potenciaOk)
+        if (carData == null)
         {
-            if (txtTimer != null) txtTimer.text = "Pitstop concluÌdo!";
+            Debug.LogError(
+                "‚ùå CarData n√£o encontrado!"
+            );
+
+            return;
+        }
+
+        /*
+         * As regras abaixo s√£o as mesmas
+         * do seu CameraController original.
+         */
+
+        bool tempOk =
+            carData.temperatura < 60f;
+
+        bool gasolinaOk =
+            carData.gasolina >= 10f;
+
+        bool pressaoOk =
+            Mathf.Abs(carData.pressao - 30f)
+            <= margemToleranciaExata;
+
+        bool emissaoOk =
+            Mathf.Abs(carData.emissao - 30f)
+            <= margemToleranciaExata;
+
+        bool potenciaOk =
+            Mathf.Abs(carData.potencia - 30f)
+            <= margemToleranciaExata;
+
+        Debug.Log("========= RESULTADO PIT STOP =========");
+
+        Debug.Log(
+            "Temperatura OK: " + tempOk
+        );
+
+        Debug.Log(
+            "Gasolina OK: " + gasolinaOk
+        );
+
+        Debug.Log(
+            "Press√£o OK: " + pressaoOk
+        );
+
+        Debug.Log(
+            "Emiss√£o OK: " + emissaoOk
+        );
+
+        Debug.Log(
+            "Pot√™ncia OK: " + potenciaOk
+        );
+
+        bool pitstopCorreto =
+            tempOk &&
+            gasolinaOk &&
+            pressaoOk &&
+            emissaoOk &&
+            potenciaOk;
+
+        if (pitstopCorreto)
+        {
+            if (txtTimer != null)
+            {
+                txtTimer.text =
+                    "Pitstop conclu√≠do!";
+            }
+
+            Debug.Log(
+                "‚úÖ PIT STOP CONCLU√çDO COM SUCESSO"
+            );
+
             FinalizarPitstopESeguirJogo();
         }
         else
         {
-            Derrota("As configuraÁıes n„o atenderam aos requisitos exigidos no tempo certo!");
+            Derrota(
+                "As configura√ß√µes n√£o atenderam aos requisitos exigidos no tempo certo!"
+            );
         }
     }
+
+    // =========================================================
+    // FINALIZAR E VOLTAR PARA CORRIDA
+    // =========================================================
 
     private void FinalizarPitstopESeguirJogo()
     {
-        // 1. CA«A A C¬MERA E VOLTA PRO MONITOR NA MARRA
-        ChangePerson trocaCamera = FindFirstObjectByType<ChangePerson>();
-        if (trocaCamera != null)
+        /*
+         * 1. Libera o CarData.
+         *
+         * Importante:
+         * CarData N√ÉO chama mais RetomarCorrida.
+         */
+
+        if (carData != null)
         {
-            trocaCamera.BotaoVoltarAoMonitor();
+            carData.EncerrarPitstop();
         }
 
-        // 2. Libera o CarData
-        if (carData != null) carData.ValidarPitstop();
+        /*
+         * 2. Volta para a c√¢mera da corrida.
+         */
 
-        // 3. CA«A A PISTA E VOLTA A CORRER NA MARRA
-        PitsTop gerenciadorPista = FindFirstObjectByType<PitsTop>();
+        ChangePerson trocaCamera =
+            FindFirstObjectByType<ChangePerson>();
+
+        if (trocaCamera != null)
+        {
+            trocaCamera.BotaoEntrarNaCorrida();
+        }
+
+        /*
+         * 3. Inicia novamente o loop.
+         *
+         * SOMENTE AQUI a corrida √© retomada.
+         */
+
+        PitsTop gerenciadorPista =
+            FindFirstObjectByType<PitsTop>();
+
         if (gerenciadorPista != null)
         {
+            Debug.Log(
+                "üèÅ Enviando comando para retomar corrida."
+            );
+
             gerenciadorPista.RetomarCorrida();
+        }
+        else
+        {
+            Debug.LogError(
+                "‚ùå PitsTop n√£o encontrado!"
+            );
         }
     }
 
+    // =========================================================
+    // DERROTA
+    // =========================================================
+
     public void Derrota(string motivo)
     {
-        if (_jogoAcabou) return;
+        if (_jogoAcabou)
+            return;
+
         _jogoAcabou = true;
+
         _pitstopAtivo = false;
 
-        if (painelDerrota != null) painelDerrota.SetActive(true);
-        if (txtMensagemDerrota != null) txtMensagemDerrota.text = motivo;
-        Time.timeScale = 0f;
+        if (carData != null)
+        {
+            carData.EncerrarPitstop();
+        }
+
+        Debug.Log(
+            "‚ùå DERROTA: " + motivo
+        );
+
+        // Garante que o jogo n√£o fique pausado
+        Time.timeScale = 1f;
+
+        // Vai para a cena de derrota
+        SceneManager.LoadScene(nomeCenaDerrota);
     }
 }

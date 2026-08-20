@@ -1,71 +1,191 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
 using UnityEngine.Splines;
 
 public class PitsTop : MonoBehaviour
 {
-    [SerializeField] private GameObject[] _cars;
+    [SerializeField]
+    private GameObject[] _cars;
 
-    [Header("Conex„o com o Minigame")]
+    [Header("Conex√£o com o Minigame")]
     public CameraController cameraController;
 
-    [Header("ConfiguraÁıes de Tempo")]
-    [SerializeField] private float _tempoAtivo = 10f;
+    [Header("Configura√ß√µes de Tempo")]
+    [SerializeField]
+    private float _tempoAtivo = 10f;
+
+    private Coroutine _rotinaAtual;
+
+    private bool _corridaAtiva = false;
+    private bool _pitstopAtivo = false;
 
     void Start()
     {
-        // ComeÁa a corrida no instante em que o jogo abre
-        StartCoroutine(RotinaDeCorrida());
+        IniciarCorrida();
     }
 
-    private void ResetarSplineDosCarros()
+    // =========================================================
+    // INICIAR CORRIDA
+    // =========================================================
+
+    public void IniciarCorrida()
     {
-        if (_cars == null) return;
-        foreach (GameObject car in _cars)
+        if (_rotinaAtual != null)
         {
-            if (car != null)
-            {
-                SplineAnimate spline = car.GetComponent<SplineAnimate>();
-                if (spline != null) spline.ElapsedTime = 0f;
-            }
+            StopCoroutine(_rotinaAtual);
+            _rotinaAtual = null;
         }
+
+        _corridaAtiva = true;
+        _pitstopAtivo = false;
+
+        Debug.Log("üèéÔ∏è ===============================");
+        Debug.Log("üèéÔ∏è CORRIDA INICIADA");
+        Debug.Log("üèéÔ∏è ===============================");
+
+        _rotinaAtual =
+            StartCoroutine(RotinaDeCorrida());
     }
 
-    public IEnumerator RotinaDeCorrida()
+    // =========================================================
+    // ROTINA DA CORRIDA
+    // =========================================================
+
+    private IEnumerator RotinaDeCorrida()
     {
-        // 1. Liga os carros e deixa eles correrem pelo tempo definido
         AtivarCarros(true);
+
+        Debug.Log(
+            "üèÅ Carros correndo por " +
+            _tempoAtivo +
+            " segundos."
+        );
+
         yield return new WaitForSeconds(_tempoAtivo);
 
-        // 2. O tempo acabou! Desativa os carros e reseta a posiÁ„o para o inÌcio da Spline
+        if (!_corridaAtiva)
+        {
+            yield break;
+        }
+
+        _corridaAtiva = false;
+        _pitstopAtivo = true;
+
+        Debug.Log("üîß ===============================");
+        Debug.Log("üîß CORRIDA FINALIZADA");
+        Debug.Log("üîß INICIANDO PIT STOP");
+        Debug.Log("üîß ===============================");
+
         AtivarCarros(false);
+
         ResetarSplineDosCarros();
 
-        // 3. Aciona o minigame no CameraController
         if (cameraController != null)
         {
             cameraController.IniciarPitstop();
         }
         else
         {
-            Debug.LogError("AtenÁ„o: VocÍ esqueceu de arrastar o CameraController para o script PitsTop l· no Unity!");
+            Debug.LogError(
+                "‚ùå CameraController n√£o foi conectado ao PitsTop!"
+            );
         }
+
+        _rotinaAtual = null;
     }
 
-    // O CameraController vai chamar esta funÁ„o 13 segundos depois que vocÍ vencer
+    // =========================================================
+    // RETOMAR CORRIDA
+    // =========================================================
+
     public void RetomarCorrida()
     {
-        StartCoroutine(RotinaDeCorrida());
+        if (_corridaAtiva)
+        {
+            Debug.Log(
+                "‚ö†Ô∏è A corrida j√° est√° ativa. Ignorando chamada duplicada."
+            );
+
+            return;
+        }
+
+        Debug.Log("üèéÔ∏è PIT STOP CONCLU√çDO!");
+        Debug.Log("üèÅ REINICIANDO LOOP DA CORRIDA...");
+
+        IniciarCorrida();
     }
+
+    // =========================================================
+    // PARAR CORRIDA
+    // =========================================================
+
+    public void PararCorrida()
+    {
+        _corridaAtiva = false;
+        _pitstopAtivo = false;
+
+        if (_rotinaAtual != null)
+        {
+            StopCoroutine(_rotinaAtual);
+            _rotinaAtual = null;
+        }
+
+        AtivarCarros(false);
+    }
+
+    // =========================================================
+    // ATIVAR / DESATIVAR CARROS
+    // =========================================================
 
     private void AtivarCarros(bool estado)
     {
-        if (_cars != null)
+        if (_cars == null)
+            return;
+
+        foreach (GameObject car in _cars)
         {
-            foreach (GameObject car in _cars)
+            if (car != null)
             {
-                car?.SetActive(estado);
+                car.SetActive(estado);
             }
         }
+    }
+
+    // =========================================================
+    // RESETAR SPLINE
+    // =========================================================
+
+    private void ResetarSplineDosCarros()
+    {
+        if (_cars == null)
+            return;
+
+        foreach (GameObject car in _cars)
+        {
+            if (car == null)
+                continue;
+
+            SplineAnimate spline =
+                car.GetComponent<SplineAnimate>();
+
+            if (spline != null)
+            {
+                spline.ElapsedTime = 0f;
+            }
+        }
+    }
+
+    // =========================================================
+    // ESTADOS
+    // =========================================================
+
+    public bool CorridaEstaAtiva()
+    {
+        return _corridaAtiva;
+    }
+
+    public bool PitstopEstaAtivo()
+    {
+        return _pitstopAtivo;
     }
 }
